@@ -12,11 +12,11 @@ This package includes TSLint rules for React Native development
 2. In your `tslint.json` add `tslint-react-native` as array item to `extends`
 3. Enable the rules you want like in code example below
 
+Example config for `tslint.json`:
 ```json
 {
-  "extends": [/* other rule sets */, "tslint-react-native"],
+  "extends": ["tslint-react-native"],
   "rules": {
-    /* other rules */
     "no-unused-styles": true
   }
 }
