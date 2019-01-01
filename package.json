@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/Vauhtio/tslint-react-native.git"
   },
-  "author": "",
+  "author": "Henrik Raitasola",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Vauhtio/tslint-react-native/issues"
