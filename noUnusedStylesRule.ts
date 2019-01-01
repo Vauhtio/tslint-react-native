@@ -5,11 +5,11 @@ export class Rule extends Lint.Rules.AbstractRule {
   public static FAILURE_STRING = 'This style is not used';
 
   public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-    return this.applyWithWalker(new NoImportsWalker(sourceFile, this.getOptions()));
+    return this.applyWithWalker(new NoUnusedStylesWalker(sourceFile, this.getOptions()));
   }
 }
 
-class NoImportsWalker extends Lint.RuleWalker {
+class NoUnusedStylesWalker extends Lint.RuleWalker {
   private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElementLike>> = {};
   private usedProperties: string[] = [];
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
