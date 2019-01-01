@@ -14,7 +14,6 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
   private usedProperties: string[] = [];
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
     if (this.isStyleSheetNode(node)) {
-      console.log(node.name.getText());
       if (node.initializer) {
         node.initializer.forEachChild(child => {
           if (ts.isObjectLiteralExpression(child)) {
