@@ -2,7 +2,7 @@
   "name": "tslint-react-native",
   "version": "0.0.1",
   "description": "TSLint rules for React Native",
-  "main": "index.js",
+  "main": "tslint-react-native.json",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
