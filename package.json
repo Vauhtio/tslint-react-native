@@ -1,6 +1,6 @@
 {
   "name": "tslint-react-native",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TSLint rules for React Native",
   "main": "tslint-react-native.json",
   "scripts": {
