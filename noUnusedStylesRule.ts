@@ -13,12 +13,12 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
   private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElementLike>> = {};
   private usedProperties: Record<string, string[]> = {};
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
-    if (node.initializer && this.isStyleSheetNode(node.initializer)) {
-      node.initializer.forEachChild(child => {
-        if (ts.isObjectLiteralExpression(child)) {
-          this.stylesheets[node.name.getText()] = child.properties;
-        }
-      });
+    const { initializer, name } = node;
+    if (initializer && this.isStyleSheetNode(initializer) && ts.isCallExpression(initializer)) {
+      const firstArgument = initializer.arguments[0];
+      if (ts.isObjectLiteralExpression(firstArgument)) {
+        this.stylesheets[name.getText()] = firstArgument.properties;
+      }
     }
     super.visitVariableDeclaration(node);
   }
