@@ -11,7 +11,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 class NoUnusedStylesWalker extends Lint.RuleWalker {
   private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElementLike>> = {};
-  private usedProperties: string[] = [];
+  private usedProperties: Record<string, string[]> = {};
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
     if (this.isStyleSheetNode(node)) {
       if (node.initializer) {
@@ -26,18 +26,19 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
   }
 
   public visitPropertyAccessExpression(node: ts.PropertyAccessExpression) {
-    if (node.expression.getText() === 'styles') {
-      this.usedProperties.push(node.name.getText());
+    if (!this.usedProperties[node.expression.getText()]) {
+      this.usedProperties[node.expression.getText()] = [];
     }
+    this.usedProperties[node.expression.getText()].push(node.name.getText())
 
     super.visitPropertyAccessExpression(node);
   }
 
   public visitEndOfFileToken(node: ts.EndOfFileToken) {
-    Object.values(this.stylesheets).forEach(stylesheet => {
+    Object.entries(this.stylesheets).forEach(([variableName, stylesheet]) => {
       stylesheet.forEach(child => {
         if (child.name) {
-          if (!this.usedProperties.includes(child.name.getText())) {
+          if (!this.usedProperties[variableName].includes(child.name.getText())) {
             this.addFailure(
               this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING),
             );

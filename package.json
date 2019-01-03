@@ -4,6 +4,7 @@
   "description": "TSLint rules for React Native",
   "main": "tslint-react-native.json",
   "scripts": {
+    "start": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
   },
