@@ -13,14 +13,12 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
   private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElementLike>> = {};
   private usedProperties: Record<string, string[]> = {};
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
-    if (this.isStyleSheetNode(node)) {
-      if (node.initializer) {
-        node.initializer.forEachChild(child => {
-          if (ts.isObjectLiteralExpression(child)) {
-            this.stylesheets[node.name.getText()] = child.properties;
-          }
-        });
-      }
+    if (node.initializer && this.isStyleSheetNode(node.initializer)) {
+      node.initializer.forEachChild(child => {
+        if (ts.isObjectLiteralExpression(child)) {
+          this.stylesheets[node.name.getText()] = child.properties;
+        }
+      });
     }
     super.visitVariableDeclaration(node);
   }
@@ -29,7 +27,7 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
     if (!this.usedProperties[node.expression.getText()]) {
       this.usedProperties[node.expression.getText()] = [];
     }
-    this.usedProperties[node.expression.getText()].push(node.name.getText())
+    this.usedProperties[node.expression.getText()].push(node.name.getText());
 
     super.visitPropertyAccessExpression(node);
   }
@@ -40,7 +38,7 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
         if (child.name) {
           if (!this.usedProperties[variableName].includes(child.name.getText())) {
             this.addFailure(
-              this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING),
+              this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING)
             );
           }
         }
@@ -49,20 +47,13 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
     super.visitEndOfFileToken(node);
   }
 
-  private isStyleSheetNode(node: ts.VariableDeclaration) {
-    const stylesheet =
-      node.initializer &&
-      node.initializer.getChildAt(0) &&
-      node.initializer.getChildAt(0).getChildAt(0);
-    const createCall =
-      node.initializer &&
-      node.initializer.getChildAt(0) &&
-      node.initializer.getChildAt(0).getChildAt(2);
+  private isStyleSheetNode(initializer: ts.Expression) {
     return (
-      stylesheet &&
-      stylesheet.getText() === 'StyleSheet' &&
-      createCall &&
-      createCall.getText() === 'create'
+      ts.isCallExpression(initializer) &&
+      initializer.expression &&
+      ts.isPropertyAccessExpression(initializer.expression) &&
+      initializer.expression.expression.getText() === 'StyleSheet' &&
+      initializer.expression.name.getText() === 'create'
     );
   }
 }
