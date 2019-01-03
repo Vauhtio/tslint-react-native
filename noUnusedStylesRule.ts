@@ -41,7 +41,7 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
           !this.usedProperties[variableName].includes(child.name.getText())
         ) {
           this.addFailure(
-            this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING)
+            this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING),
           );
         }
       });
