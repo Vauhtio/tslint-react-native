@@ -12,9 +12,10 @@ export class Rule extends Lint.Rules.AbstractRule {
 class NoUnusedStylesWalker extends Lint.RuleWalker {
   private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElement>> = {};
   private usedProperties: Record<string, string[]> = {};
+
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
-    const { initializer, name } = node;
-    if (initializer && this.isStyleSheetNode(initializer) && ts.isCallExpression(initializer)) {
+    const { name, initializer } = node;
+    if (initializer && this.isStyleSheetInitializer(initializer)) {
       const firstArgument = initializer.arguments[0];
       if (ts.isObjectLiteralExpression(firstArgument)) {
         this.stylesheets[name.getText()] = firstArgument.properties;
@@ -48,7 +49,7 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
     super.visitEndOfFileToken(node);
   }
 
-  private isStyleSheetNode(initializer: ts.Expression) {
+  private isStyleSheetInitializer(initializer: ts.Expression): initializer is ts.CallExpression {
     return (
       ts.isCallExpression(initializer) &&
       initializer.expression &&
