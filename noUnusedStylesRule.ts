@@ -10,7 +10,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 class NoUnusedStylesWalker extends Lint.RuleWalker {
-  private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElementLike>> = {};
+  private stylesheets: Record<string, ts.NodeArray<ts.ObjectLiteralElement>> = {};
   private usedProperties: Record<string, string[]> = {};
   public visitVariableDeclaration(node: ts.VariableDeclaration) {
     const { initializer, name } = node;
@@ -35,12 +35,13 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
   public visitEndOfFileToken(node: ts.EndOfFileToken) {
     Object.entries(this.stylesheets).forEach(([variableName, stylesheet]) => {
       stylesheet.forEach(child => {
-        if (child.name) {
-          if (!this.usedProperties[variableName].includes(child.name.getText())) {
-            this.addFailure(
-              this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING)
-            );
-          }
+        if (
+          ts.isPropertyAssignment(child) &&
+          !this.usedProperties[variableName].includes(child.name.getText())
+        ) {
+          this.addFailure(
+            this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING)
+          );
         }
       });
     });
