@@ -17,7 +17,7 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
     const { name, initializer } = node;
     if (initializer && this.isStyleSheetInitializer(initializer)) {
       const firstArgument = initializer.arguments[0];
-      if (ts.isObjectLiteralExpression(firstArgument)) {
+      if (firstArgument && ts.isObjectLiteralExpression(firstArgument)) {
         this.stylesheets[name.getText()] = firstArgument.properties;
       }
     }
