@@ -38,7 +38,8 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
       stylesheet.forEach(child => {
         if (
           ts.isPropertyAssignment(child) &&
-          !this.usedProperties[variableName].includes(child.name.getText())
+          (!this.usedProperties[variableName] ||
+            !this.usedProperties[variableName].includes(child.name.getText()))
         ) {
           this.addFailure(
             this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING),
