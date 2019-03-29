@@ -35,11 +35,11 @@ class NoUnusedStylesWalker extends Lint.RuleWalker {
 
   public visitEndOfFileToken(node: ts.EndOfFileToken) {
     Object.entries(this.stylesheets).forEach(([variableName, stylesheet]) => {
+      const usedPropsForStyleSheet = this.usedProperties[variableName];
       stylesheet.forEach(child => {
         if (
           ts.isPropertyAssignment(child) &&
-          (!this.usedProperties[variableName] ||
-            !this.usedProperties[variableName].includes(child.name.getText()))
+          (!usedPropsForStyleSheet || !usedPropsForStyleSheet.includes(child.name.getText()))
         ) {
           this.addFailure(
             this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING),
